@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
+import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.api.NasaApi
+import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,13 +29,15 @@ class MainViewModel : ViewModel() {
         get() = _pictureOfDay
 
     //List of Asteroid data classes encapsulated
-    private val _asteroid = MutableLiveData<String>()
-    val asteroid: LiveData<String>
-        get() = _asteroid
+    private val _asteroidList = MutableLiveData<ArrayList<Asteroid>>()
+    val asteroidList: LiveData<ArrayList<Asteroid>>
+        get() = _asteroidList
 
     //Get NASA data on ViewModel initialisation
     init {
+        Timber.i("MainViewModel init block run")
         getNasaData()
+        getNasaAsteroids()
     }
 
     //Define GetNasaData as coroutine
@@ -47,7 +53,22 @@ class MainViewModel : ViewModel() {
                 }
                 //TODO add title text to talkback in xml
             } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
+                Timber.i("getNasaData call failed: ${e.message}")
+            }
+        }
+    }
+
+    private fun getNasaAsteroids() {
+        Timber.i("getNasaAsteroids called")
+        viewModelScope.launch {
+            try {
+                val stringResult = AsteroidApi.retrofitService.getAsteroids()
+                val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
+                _asteroidList.value = jsonResult
+                Timber.i("${jsonResult.size} asteroids found")
+                Timber.i("Response (Parsed): ${_asteroidList.value}")
+            } catch (e: Exception) {
+                Timber.i("getNasaAsteroids call failed: ${e.message}")
             }
         }
     }

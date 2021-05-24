@@ -21,15 +21,11 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-//@GET method to get asteroids and image of the day
-
+//@GET method to get image of the day
 interface NasaApiService {
     @GET("planetary/apod?api_key=${API_KEY}")
     suspend fun getImage():
             PictureOfDay
-//    @GET("neo/rest/v1/feed?start_date=${START_DATE}&end_date=${END_DATE}&api_key=${API_KEY}")
-//    fun getAsteroids():
-//            Call<String> //Currently JSON as string, will convert to list of Asteroid data classes (parcelable)
 }
 
 //NASA API object to expose retrofit to rest of system
