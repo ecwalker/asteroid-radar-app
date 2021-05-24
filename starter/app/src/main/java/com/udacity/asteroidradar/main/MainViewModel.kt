@@ -18,11 +18,6 @@ import timber.log.Timber
 
 class MainViewModel : ViewModel() {
 
-    //Encapsulated status LiveData
-    private val _status = MutableLiveData<String>()
-    val status: LiveData<String>
-        get() = _status
-
     //Picture of the day data class encapsulated
     private val _pictureOfDay = MutableLiveData<PictureOfDay?>()
     val pictureOfDay: LiveData<PictureOfDay?>
@@ -45,7 +40,6 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 var imageResult = NasaApi.retrofitService.getImage()
-                _status.value = "Success"
                 if (imageResult.mediaType == "image") {
                     _pictureOfDay.value = imageResult
                 } else {
@@ -66,7 +60,7 @@ class MainViewModel : ViewModel() {
                 val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
                 _asteroidList.value = jsonResult
                 Timber.i("${jsonResult.size} asteroids found")
-                Timber.i("Response (Parsed): ${_asteroidList.value}")
+                Timber.i("Response (Parsed): ${asteroidList.value}")
             } catch (e: Exception) {
                 Timber.i("getNasaAsteroids call failed: ${e.message}")
             }

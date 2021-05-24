@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
 
     <data>
         <variable
-            name="viewModel"
+            name="mainViewModel"
             type="com.udacity.asteroidradar.main.MainViewModel" />
 
     </data>
@@ -28,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                app:imageUrl="@{viewModel.pictureOfDay.component3()}"/>
+                app:imageUrl="@{mainViewModel.pictureOfDay.component3()}"/>
 
 
             <TextView
@@ -54,7 +55,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_main_image_of_the_day_layout"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            tool:listitem="@layout/list_item_asteroid"/>
 
         <ProgressBar
             android:id="@+id/status_loading_wheel"
