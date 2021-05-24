@@ -66,4 +66,17 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
+    //Navigation to asteroid detail fragment
+    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
+    val navigateToAsteroidDetail: LiveData<Asteroid>
+        get() = _navigateToAsteroidDetail
+
+    fun onAsteroidClicked(asteroid: Asteroid) {
+        _navigateToAsteroidDetail.value = asteroid
+    }
+
+    fun onAsteroidDetailNavigated() {
+        _navigateToAsteroidDetail.value = null
+    }
 }
