@@ -40,6 +40,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 var imageResult = NasaApi.retrofitService.getImage()
+                Timber.i("NASA image of the day media type: ${imageResult.mediaType}")
                 if (imageResult.mediaType == "image") {
                     _pictureOfDay.value = imageResult
                 } else {

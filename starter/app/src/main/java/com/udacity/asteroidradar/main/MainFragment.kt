@@ -22,7 +22,6 @@ class MainFragment : Fragment() {
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
-
         binding.mainViewModel = viewModel
 
         val adapter = AsteroidAdapter(AsteroidListener {
