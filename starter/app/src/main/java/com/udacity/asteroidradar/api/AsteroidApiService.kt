@@ -18,7 +18,7 @@ private val retrofit = Retrofit.Builder()
 interface AsteroidApiService {
     //TODO make start and end date dynamic (lamda fun?)
     //@GET("neo/rest/v1/feed?start_date=2021-05-24&end_date=2021-05-27&api_key=${API_KEY}")
-    @GET("neo/rest/v1/feed?start_date=2021-05-25&api_key=${API_KEY}")
+    @GET("neo/rest/v1/feed?start_date=2021-05-26&api_key=${API_KEY}")
     suspend fun getAsteroids():
             //ArrayList<Asteroid>
             String
