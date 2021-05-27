@@ -65,11 +65,10 @@ dependencies {
 
     implementation "androidx.room:room-runtime:2.2.5"
     kapt "androidx.room:room-compiler:2.2.5"
+    // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.2.5"
-//    implementation "androidx.room:room-runtime:$version_room"
-//    kapt "androidx.room:room-compiler:$version_room"
-//    // Kotlin Extensions and Coroutines support for Room
-//    implementation "androidx.room:room-ktx:$version_room"
+    //Support for using a worker
+    implementation "android.arch.work:work-runtime-ktx:2.2.5"
 
     implementation "android.arch.work:work-runtime-ktx:1.0.1"
 

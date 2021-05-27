@@ -8,6 +8,7 @@ import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidDatabaseDao
+import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
@@ -24,18 +25,25 @@ class MainViewModel(
     val pictureOfDay: LiveData<PictureOfDay?>
         get() = _pictureOfDay
 
-    //List of Asteroid data classes encapsulated
-    private val _asteroidList = MutableLiveData<ArrayList<Asteroid>>()
+//    //List of Asteroid data classes encapsulated
+//    private val _asteroidList = MutableLiveData<ArrayList<Asteroid>>()
+//
+//    //List of asteroids from database
+//    val asteroids = database.getAllAsteroids()
 
-    //List of asteroids from database
-    val asteroids = database.getAllAsteroids()
+
+    //Use repository instead of ViewModel directly
+    private val asteroidRepository = AsteroidRepository(database)
+    val asteroids = asteroidRepository.asteroids
 
     //Get NASA data on ViewModel initialisation
     init {
         Timber.i("MainViewModel init block run")
         getNasaData()
-        getNasaAsteroids()
-        //updateDatabase()
+//        //getNasaAsteroids()
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids()
+        }
     }
 
     /**
@@ -59,51 +67,31 @@ class MainViewModel(
         }
     }
 
-    private fun getNasaAsteroids() {
-        Timber.i("getNasaAsteroids called")
-        viewModelScope.launch {
-            try {
-                val stringResult = AsteroidApi.retrofitService.getAsteroids()
-                val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
-                _asteroidList.value = jsonResult
-                Timber.i("${jsonResult.size} asteroids found")
-                Timber.i("Response (Parsed): ${_asteroidList.value}")
-                _asteroidList.value?.let {
-                    //TODO: Does this need to check whether asteroid exists before inserting?
-                    for (i in it) {
-                        insert(i)
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.i("getNasaAsteroids call failed: ${e.message}")
-            }
-        }
-    }
+//    private fun getNasaAsteroids() {
+//        Timber.i("getNasaAsteroids called")
+//        viewModelScope.launch {
+//            try {
+//                val stringResult = AsteroidApi.retrofitService.getAsteroids()
+//                val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
+//                _asteroidList.value = jsonResult
+//                Timber.i("${jsonResult.size} asteroids found")
+//                Timber.i("Response (Parsed): ${_asteroidList.value}")
+//                _asteroidList.value?.let {
+//                    //database.insertAll(*it) //.toArray())
+//                    for (i in it) {
+//                        insert(i)
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                Timber.i("getNasaAsteroids call failed: ${e.message}")
+//            }
+//        }
+//    }
 
     /**
-     * Interactions with database
+     * Interactions with database (Moved to worker)
      */
-    //TODO: Add worker to schedule API checks
-    private fun updateDatabase() {
-        Timber.i("updateDatabase called")
-        viewModelScope.launch {
-            try {
-                _asteroidList.value?.let {
-                    Timber.i("Inserting asteroids into database...")
-                    for (i in it) {
-                        insert(i)
-//                        val inDatabase = checkExists(i).toString()
-//                        if (inDatabase == "0") {
-//                            insert(i)
-//                        }
-                    }
-                    Timber.i("Asteroids inserted into database")
-                } ?: Timber.i("Asteroid list is null")
-            } catch (e: Exception) {
-                Timber.i("Database update failed: ${e.message}")
-            }
-        }
-    }
+
 
     /**
      * Navigation to asteroid detail fragment
@@ -124,14 +112,14 @@ class MainViewModel(
      * Database functions
      */
 
-    //Insert
-    private suspend fun insert(asteroid: Asteroid) {
-        database.insert(asteroid)
-    }
-
-    //Check if asteroid record already exists
-    private suspend fun checkExists(asteroid: Asteroid) {
-        //database.checkExists(asteroid.id)
-    }
+//    //Insert
+//    private suspend fun insert(asteroid: Asteroid) {
+//        database.insert(asteroid)
+//    }
+//
+//    //Check if asteroid record already exists
+//    private suspend fun checkExists(asteroid: Asteroid) {
+//        //database.checkExists(asteroid.id)
+//    }
 
 }
