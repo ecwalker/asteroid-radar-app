@@ -46,6 +46,7 @@ class MainFragment : Fragment() {
             } ?: Timber.i("asteroids LiveData is null")
         })
 
+        //Observe asteroid click to navigate to detail fragment
         viewModel.navigateToAsteroidDetail.observe(viewLifecycleOwner, Observer {id ->
             id?.let {
                 this.findNavController().navigate(

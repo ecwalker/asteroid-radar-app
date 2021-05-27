@@ -15,15 +15,20 @@ class AsteroidRepository(private val database: AsteroidDatabaseDao) {
 
     suspend fun refreshAsteroids() {
         withContext(Dispatchers.IO) {
-            val stringResult = AsteroidApi.retrofitService.getAsteroids()
-            val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
-            Timber.i("${jsonResult.size} asteroids found")
-            Timber.i("Response (Parsed): ${jsonResult}")
-            jsonResult?.let {
-                for (i in it) {
-                    database.insert(i)
+            try {
+                val stringResult = AsteroidApi.retrofitService.getAsteroids()
+                val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
+                Timber.i("${jsonResult.size} asteroids found")
+                Timber.i("Response (Parsed): $jsonResult")
+                jsonResult?.let {
+                    for (i in it) {
+                        database.insert(i)
+                    }
                 }
+            } catch (e: Exception) {
+                Timber.i("refreshAsteroids call failed: ${e.message}")
             }
         }
     }
+
 }

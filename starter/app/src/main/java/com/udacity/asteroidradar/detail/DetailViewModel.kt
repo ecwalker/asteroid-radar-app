@@ -15,9 +15,13 @@ class DetailViewModel(private val asteroidKey: Long = 0L,
     //Selected asteroid LiveData
     private val _selectedAsteroid = MutableLiveData<Asteroid>()
     val selectedAsteroid = MediatorLiveData<Asteroid>()
-    //fun getAsteroid() = selectedAsteroid
 
-    //Initialise selected asteroid
+    //Potentially hazardous LiveData to update talkback
+    private val _potentiallyHazoudousText = MutableLiveData<String>()
+    val potentiallyHazoudousText: LiveData<String>
+        get() = _potentiallyHazoudousText
+
+    //Initialise block, retrieve selected asteroid
     init {
         getAsteroidFromDatabase(asteroidKey)
         selectedAsteroid.addSource(_selectedAsteroid, selectedAsteroid::setValue)
@@ -36,5 +40,4 @@ class DetailViewModel(private val asteroidKey: Long = 0L,
             }
         }
     }
-
 }

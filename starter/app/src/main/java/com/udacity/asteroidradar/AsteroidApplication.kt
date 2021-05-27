@@ -13,7 +13,7 @@ import com.udacity.asteroidradar.repository.RefreshDataWorker
 /**
  * Override application to setup background work via WorkManager
  */
-class DevByteApplication : Application() {
+class AsteroidApplication : Application() {
 
     val applicationScope = CoroutineScope(Dispatchers.Default)
 

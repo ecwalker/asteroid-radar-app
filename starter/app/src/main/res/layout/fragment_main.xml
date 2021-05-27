@@ -30,7 +30,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:imageUrl="@{mainViewModel.pictureOfDay.component3()}"
-                android:contentDescription="@{mainViewModel.pictureOfDay.component2()}"/>
+                app:formatPOTDText="@{mainViewModel.pictureOfDay}"/>
 
 
             <TextView

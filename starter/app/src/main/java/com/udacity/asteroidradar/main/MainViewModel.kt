@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
+import android.content.res.Resources
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.PictureOfDay
@@ -25,13 +26,6 @@ class MainViewModel(
     val pictureOfDay: LiveData<PictureOfDay?>
         get() = _pictureOfDay
 
-//    //List of Asteroid data classes encapsulated
-//    private val _asteroidList = MutableLiveData<ArrayList<Asteroid>>()
-//
-//    //List of asteroids from database
-//    val asteroids = database.getAllAsteroids()
-
-
     //Use repository instead of ViewModel directly
     private val asteroidRepository = AsteroidRepository(database)
     val asteroids = asteroidRepository.asteroids
@@ -40,7 +34,6 @@ class MainViewModel(
     init {
         Timber.i("MainViewModel init block run")
         getNasaData()
-//        //getNasaAsteroids()
         viewModelScope.launch {
             asteroidRepository.refreshAsteroids()
         }
@@ -60,36 +53,14 @@ class MainViewModel(
                 } else {
                     _pictureOfDay.value = null
                 }
-                //TODO add title text to talkback in xml
             } catch (e: Exception) {
                 Timber.i("getNasaData call failed: ${e.message}")
             }
         }
     }
 
-//    private fun getNasaAsteroids() {
-//        Timber.i("getNasaAsteroids called")
-//        viewModelScope.launch {
-//            try {
-//                val stringResult = AsteroidApi.retrofitService.getAsteroids()
-//                val jsonResult = parseAsteroidsJsonResult(JSONObject(stringResult))
-//                _asteroidList.value = jsonResult
-//                Timber.i("${jsonResult.size} asteroids found")
-//                Timber.i("Response (Parsed): ${_asteroidList.value}")
-//                _asteroidList.value?.let {
-//                    //database.insertAll(*it) //.toArray())
-//                    for (i in it) {
-//                        insert(i)
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Timber.i("getNasaAsteroids call failed: ${e.message}")
-//            }
-//        }
-//    }
-
     /**
-     * Interactions with database (Moved to worker)
+     * Interactions with database (Moved to repository)
      */
 
 
@@ -107,19 +78,5 @@ class MainViewModel(
     fun onAsteroidDetailNavigated() {
         _navigateToAsteroidDetail.value = null
     }
-
-    /**
-     * Database functions
-     */
-
-//    //Insert
-//    private suspend fun insert(asteroid: Asteroid) {
-//        database.insert(asteroid)
-//    }
-//
-//    //Check if asteroid record already exists
-//    private suspend fun checkExists(asteroid: Asteroid) {
-//        //database.checkExists(asteroid.id)
-//    }
 
 }
