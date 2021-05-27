@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
@@ -17,20 +18,23 @@ class DetailFragment : Fragment() {
         val binding = FragmentDetailBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
+        val application = requireNotNull(this.activity).application
 
-//        val application = requireNotNull(this.activity).application
+        //Retrieve arguments from bundle
+        val arguments = DetailFragmentArgs.fromBundle(arguments!!) //use requireArguments()?
 
-        val asteroid = DetailFragmentArgs.fromBundle(arguments!!).selectedAsteroid //use requireArguments()?
-        binding.asteroid = asteroid
+        //Look up asteroid in database
+        //binding.asteroid = asteroid
+        val dataSource = AsteroidDatabase.getInstance(application).asteroidDatabaseDao
 
-//        val viewModelFactory = DetailViewModelFactory(asteroid, application)
+        val viewModelFactory = DetailViewModelFactory(arguments.asteroidKey, dataSource)
 
-//        // Get a reference to the ViewModel associated with this fragment.
-//        val detailViewModel =
-//            ViewModelProvider(
-//                this, viewModelFactory).get(DetailViewModel::class.java)
-//
-//        binding.detailViewModel = detailViewModel
+        // Get a reference to the ViewModel associated with this fragment.
+        val detailViewModel =
+            ViewModelProvider(
+                this, viewModelFactory).get(DetailViewModel::class.java)
+
+        binding.detailViewModel = detailViewModel
 
         //Help button for more info
         binding.helpButton.setOnClickListener {

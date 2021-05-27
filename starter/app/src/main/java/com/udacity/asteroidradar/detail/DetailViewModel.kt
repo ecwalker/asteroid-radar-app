@@ -1,21 +1,43 @@
 package com.udacity.asteroidradar.detail
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.database.AsteroidDatabaseDao
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class DetailViewModel(private val asteroid: Asteroid,
-                      private val application: Application): ViewModel() {
+class DetailViewModel(private val asteroidKey: Long = 0L,
+                      dataSource: AsteroidDatabaseDao): ViewModel() {
+
+    val database = dataSource
 
     //Selected asteroid LiveData
     private val _selectedAsteroid = MutableLiveData<Asteroid>()
-    val selectedAsteroid: LiveData<Asteroid>
-        get() = _selectedAsteroid
+    val selectedAsteroid = MediatorLiveData<Asteroid>()
 
-    //Initialise selected asteroid
+    //Potentially hazardous LiveData to update talkback
+    private val _potentiallyHazoudousText = MutableLiveData<String>()
+    val potentiallyHazoudousText: LiveData<String>
+        get() = _potentiallyHazoudousText
+
+    //Initialise block, retrieve selected asteroid
     init {
-        _selectedAsteroid.value = asteroid
+        getAsteroidFromDatabase(asteroidKey)
+        selectedAsteroid.addSource(_selectedAsteroid, selectedAsteroid::setValue)
+    }
+
+
+    /**
+     * Interactions with database
+     */
+    private fun getAsteroidFromDatabase(id: Long) {
+        viewModelScope.launch {
+            try {
+                _selectedAsteroid.value = database.get(id)
+            } catch (e: Exception) {
+                Timber.i("Failed to get selected asteroid from database: ${e.message}")
+            }
+        }
     }
 }

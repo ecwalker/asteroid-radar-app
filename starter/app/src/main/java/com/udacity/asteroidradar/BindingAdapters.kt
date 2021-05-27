@@ -4,6 +4,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.squareup.picasso.Picasso
 
 @BindingAdapter("statusIcon")
@@ -50,5 +52,25 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .placeholder(R.drawable.placeholder_picture_of_day)
             .error(R.drawable.placeholder_picture_of_day)
             .into(imgView)
+    }
+}
+
+@BindingAdapter("formatPOTDText")
+fun formatPOTDText(imgView: ImageView, picture: LiveData<PictureOfDay>) {
+    if (picture.value != null) {
+        val formatString = R.string.nasa_picture_of_day_content_description_format.toString()
+        imgView.contentDescription = String.format(formatString, picture.value?.title)
+    } else {
+        imgView.contentDescription =
+            R.string.this_is_nasa_s_picture_of_day_showing_nothing_yet.toString()
+    }
+}
+
+@BindingAdapter("setAsteroidImageText")
+fun setAsteroidImageText(imgView: ImageView, isHazardous: Boolean) {
+    if (isHazardous) {
+        imgView.contentDescription = R.string.potentially_hazardous_asteroid_image.toString()
+    } else {
+        imgView.contentDescription = R.string.not_hazardous_asteroid_image.toString()
     }
 }
